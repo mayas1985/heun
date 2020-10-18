@@ -51,8 +51,9 @@ def get_pred_from_contour(contour, thresh):
 	elif h1 > w1:
 		save_img = cv2.copyMakeBorder(save_img, 0, 0, int((h1-w1)/2) , int((h1-w1)/2) , cv2.BORDER_CONSTANT, (0, 0, 0))
 	pred_probab, pred_class = keras_predict(model, save_img)
-	print(pred_probab, pred_class)
+	
 	if pred_probab*100 > 70:
+		print(pred_probab, pred_class)
 		text = get_pred_text_from_db(pred_class)
 		
 	return text
@@ -104,10 +105,12 @@ def start_predicting(cam):
 				else:
 					count_same_frame = 0
 
-				if count_same_frame > 15:
+				if count_same_frame > 5:
 					if len(text) == 1:
 						Thread(target=say_text, args=(text, )).start()
-					word = word + text
+					if text not in word:
+						word = word + text
+					
 					if word.startswith('I/Me '):
 						word = word.replace('I/Me ', 'I ')
 					elif word.endswith('I/Me '):
@@ -132,7 +135,7 @@ def start_predicting(cam):
 		if text is not None:
 			cv2.putText(blackboard, " ", (180, 50), cv2.FONT_HERSHEY_TRIPLEX, 1.5, (255, 0,0))
 			cv2.putText(blackboard, "Predicted text- " + text, (30, 100), cv2.FONT_HERSHEY_TRIPLEX, 1, (255, 255, 0))
-			cv2.putText(blackboard, word, (30, 240), cv2.FONT_HERSHEY_TRIPLEX, 2, (255, 255, 255))
+			cv2.putText(blackboard, word, (30, 240), cv2.FONT_HERSHEY_TRIPLEX, 1, (255, 255, 255))
 		
 		if is_voice_on:
 			cv2.putText(blackboard, " ", (450, 440), cv2.FONT_HERSHEY_TRIPLEX, 1, (255, 127, 0))
