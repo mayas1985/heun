@@ -12,12 +12,13 @@ from keras.layers.convolutional import MaxPooling2D
 from keras.utils import np_utils
 from keras.callbacks import ModelCheckpoint
 from keras import backend as K
+from load_images import create_training_data
+
 K.image_data_format()
-
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-
+error_rate = -1
 def get_image_size():
-	img = cv2.imread('gestures/1/1.jpg', 0)
+	img = cv2.imread('gestures/1/100.jpg', 0)
 	return img.shape
 
 def get_num_of_classes():
@@ -58,30 +59,29 @@ def train():
 	with open("val_labels", "rb") as f:
 		val_labels = np.array(pickle.load(f), dtype=np.int32)
 
-	train_images = np.reshape(train_images, (int(train_images.shape[0]), image_x, image_y, 1))
-	val_images = np.reshape(val_images, (int(val_images.shape[0]), image_x, image_y, 1))
-	print('\n asdfasdfasdfasdfasdfasdf')
-	print(train_labels.shape)
-	#train_labels = np.reshape(train_labels,(16,1))
-	print(list(train_labels))
+	train_images = np.reshape(train_images, (train_images.shape[0], image_x, image_y, 1))
+	val_images = np.reshape(val_images, (val_images.shape[0], image_x, image_y, 1))
 	train_labels = np_utils.to_categorical(train_labels)
-
 	val_labels = np_utils.to_categorical(val_labels)
-	#val_labels = np.reshape(val_labels,(2,1))
 
-
+	print(val_labels.shape)
 
 	model, callbacks_list = cnn_model()
 	model.summary()
-	print(list(train_labels))
-	print(val_images.shape)
-	print(val_labels.shape)
-	print(train_images.shape)
-	print(train_labels.shape)
-	model.fit(train_images, train_labels, validation_data=(val_images, val_labels), epochs=20, batch_size=500, callbacks=callbacks_list)
+	model.fit(train_images, train_labels, validation_data=(val_images, val_labels), epochs=15, batch_size=500, callbacks=callbacks_list)
 	scores = model.evaluate(val_images, val_labels, verbose=0)
-	print("CNN Error: %.2f%%" % (100-scores[1]*100))
+	print(list(scores))
+	global error_rate = 100-scores[1]*100
+	print("CNN Error: %.2f%%" % (error_rate))
+	
 	model.save('cnn_model_keras2.h5')
 
 train()
+while int(error_rate) < 25 :
+	
+	print('FINAL SCORE NOT MATCHED >>> RUNNING AGAIN %.2f%%' % (error_rate))
+	create_training_data()
+	train()
+	
+
 K.clear_session();
