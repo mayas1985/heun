@@ -3,12 +3,12 @@ import numpy as np
 
 def get_image_size():
 	
-	img = cv2.imread('gestures/1/1.jpg', 0)
+	img = cv2.imread('gestures/0/1.jpg', 0)
 	return img.shape
 
 gestures = os.listdir('gestures/')
 gestures.sort(key = int)
-begin_index = 1
+begin_index = 0
 end_index = len(gestures) + 1
 image_x, image_y = get_image_size()
 
