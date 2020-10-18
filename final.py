@@ -104,7 +104,7 @@ def start_predicting(cam):
 				else:
 					count_same_frame = 0
 
-				if count_same_frame > 5:
+				if count_same_frame > 15:
 					if len(text) == 1:
 						Thread(target=say_text, args=(text, )).start()
 					word = word + text

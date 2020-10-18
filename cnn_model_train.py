@@ -17,6 +17,7 @@ from load_images import create_training_data
 K.image_data_format()
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 error_rate = -1
+max_retry = 3
 def get_image_size():
 	img = cv2.imread('gestures/1/100.jpg', 0)
 	return img.shape
@@ -78,8 +79,10 @@ def train():
 	model.save('cnn_model_keras2.h5')
 
 train()
-while int(error_rate) < 25 :
-	
+while int(error_rate) > 24 :
+	if max_retry < 0:
+		break
+	max_retry -=1
 	print('FINAL SCORE NOT MATCHED >>> RUNNING AGAIN %.2f%%' % (error_rate))
 	create_training_data()
 	train()

@@ -80,7 +80,8 @@ def store_images(g_id):
 					save_img = cv2.flip(save_img, 1)
 				cv2.putText(img, "Capturing...", (30, 60), cv2.FONT_HERSHEY_TRIPLEX, 2, (127, 255, 255))
 				cv2.imwrite("gestures/"+str(g_id)+"/"+str(pic_no)+".jpg", save_img)
-
+			else:
+				cv2.putText(img, str(flag_start_capturing) +  "Not Capturing... contours not satisfied", (30, 60), cv2.FONT_HERSHEY_TRIPLEX, 2, (127, 255, 255))
 		cv2.rectangle(img, (x,y), (x+w, y+h), (0,255,0), 2)
 		cv2.putText(img, str(pic_no), (30, 400), cv2.FONT_HERSHEY_TRIPLEX, 1.5, (127, 127, 255))
 		cv2.imshow("Capturing gesture", img)
